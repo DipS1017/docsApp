@@ -1,7 +1,20 @@
-"use client"
+"use client";
 import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/store/use-editor-store";
-import { LucideIcon, Undo2Icon } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import {
+  Bold,
+  ItalicIcon,
+  ListTodoIcon,
+  LucideIcon,
+  MessageSquarePlusIcon,
+  PrinterIcon,
+  Redo2Icon,
+  RemoveFormattingIcon,
+  SpellCheckIcon,
+  UnderlineIcon,
+  Undo2Icon,
+} from "lucide-react";
 
 interface ToolbarButtonProps {
   onClick?: () => void;
@@ -26,7 +39,7 @@ const ToolbarButton = ({
   );
 };
 export const Toolbar = () => {
-  const {editor} = useEditorStore();
+  const { editor } = useEditorStore();
   console.log("The toolbar editor is", editor);
   const sections: {
     label: string;
@@ -38,9 +51,84 @@ export const Toolbar = () => {
       {
         label: "Undo",
         icon: Undo2Icon,
-        onClick: () =>editor?.chain().focus().undo().run(),
+        onClick: () => editor?.chain().focus().undo().run(),
+      },
+
+      {
+        label: "Redo",
+        icon: Redo2Icon,
+        onClick: () => editor?.chain().focus().redo().run(),
+      },
+
+      {
+        label: "Print",
+        icon: PrinterIcon,
+        onClick: () => window.print(),
+      },
+      {
+        label: "Spell Check",
+        icon: SpellCheckIcon,
+        onClick: () => {
+          const current = editor?.view.dom.getAttribute("spellcheck");
+          editor?.view.dom.setAttribute(
+            "spellcheck",
+            current === "true" ? "false" : "true",
+          );
+        },
       },
     ],
+      [
+ {
+        label: "Bold",
+        icon: Bold,
+          isActive: editor?.isActive("bold"),
+        onClick: () => editor?.chain().focus().toggleBold().run(),
+
+      },
+ {
+        label: "Italic",
+        icon: ItalicIcon,
+          isActive: editor?.isActive("italic"),
+        onClick: () => editor?.chain().focus().toggleItalic().run(),
+
+      },
+{
+        label: "Underline",
+        icon: UnderlineIcon,
+          isActive: editor?.isActive("underline"),
+        onClick: () => editor?.chain().focus().toggleUnderline().run(),
+
+      },
+        
+
+      ],
+      [
+        {
+        label: "Comment",
+        icon: MessageSquarePlusIcon,
+        onClick: () => console.log("Comment"), 
+        isActive:false,
+
+      },
+  {
+        label: "List Todo",
+        icon: ListTodoIcon,
+        onClick: () => editor?.chain().focus().toggleTaskList().run(), 
+        isActive:editor?.isActive("taskList"),
+
+      },
+{
+        label: "Remove Formatting",
+
+        icon: RemoveFormattingIcon,
+        onClick: () => editor?.chain().focus().unsetAllMarks().run(), 
+
+      },
+
+      
+      
+
+      ],
   ];
 
   return (
@@ -48,6 +136,32 @@ export const Toolbar = () => {
       {sections[0].map((item) => (
         <ToolbarButton key={item.label} {...item} />
       ))}
+      <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
+      {/*TODO font famitly*/}
+           <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
+      {/*TODO heading*/}
+ 
+      <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
+      {/*TODO font size*/}
+
+      <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
+      { sections[1].map((item) => (
+
+<ToolbarButton key={item.label} {...item} />
+      ))}
+      <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
+      { sections[2].map((item) => (
+
+<ToolbarButton key={item.label} {...item} />
+      ))}
+
+
+      <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
+      {/*TODO text color*/}
+
+
+
+      
     </div>
   );
 };
