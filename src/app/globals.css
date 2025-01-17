@@ -91,6 +91,15 @@ body {
 
 .tiptap {
   /*image styling*/
+a{
+    @apply text-blue-600;
+    cursor: pointer;
+    &:hover {
+      @apply underline;
+    }
+
+
+  }
 img {
     display: block;
     height: auto;

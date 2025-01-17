@@ -5,6 +5,7 @@ import TaskItem from "@tiptap/extension-task-item";
 import StarterKit from "@tiptap/starter-kit";
 import Table from "@tiptap/extension-table";
 import Image from "@tiptap/extension-image";
+import Link from "@tiptap/extension-link";
 import ImageResize from "tiptap-extension-resize-image";
 import Underline from "@tiptap/extension-underline";
 import TableCell from "@tiptap/extension-table-cell";
@@ -52,6 +53,7 @@ export const Editor = () => {
     },
     extensions: [
       StarterKit,
+      Link.configure({ openOnClick: false,autolink: true,defaultProtocol: 'https://'}),
       Color,
       Highlight.configure({
         multicolor: true,
