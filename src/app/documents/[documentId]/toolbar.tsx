@@ -4,6 +4,7 @@ import { useEditorStore } from "@/store/use-editor-store";
 import { Separator } from "@/components/ui/separator";
 import {
   Bold,
+  ChevronDownIcon,
   ItalicIcon,
   ListTodoIcon,
   LucideIcon,
@@ -15,9 +16,55 @@ import {
   UnderlineIcon,
   Undo2Icon,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@radix-ui/react-dropdown-menu";
 
+export const FontFamilyButton = () => {
+  const { editor } = useEditorStore();
+
+  const fonts = [
+    { label: "arial", value: "arial" },
+    { label: "times new roman", value: "times new roman" },
+    { label: "courier new", value: "courier new" },
+    { label: "georgia", value: "georgia" },
+    { label: "verdana", value: "verdana" },
+  ];
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="h-7 w-[120px] shrink-0 flex items-center justify-between rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
+          <span className="truncate">
+            {editor?.getAttributes("textStyle").fontFamily || "Arial"}
+          </span>
+          <ChevronDownIcon className="ml-2 size-4 shrink-0" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="p-1 flex flex-col gap-y-1 z-20 bg-neutral-100">
+        {fonts.map(({ label, value }) => (
+          <button
+            onClick={() =>
+              editor?.chain().focus().setFontFamily( value).run()}
+            key={value}
+            className={cn(
+              "flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80 ",
+              editor?.getAttributes("textStyle").fontFamily === value &&
+                "bg-neutral-200/80",
+            )}
+            style={{ fontFamily: value }}
+          >
+            <span className="text-sm">{label}</span>
+          </button>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 interface ToolbarButtonProps {
   onClick?: () => void;
+
   isActive?: boolean;
   icon: LucideIcon;
 }
@@ -77,58 +124,46 @@ export const Toolbar = () => {
         },
       },
     ],
-      [
- {
+    [
+      {
         label: "Bold",
         icon: Bold,
-          isActive: editor?.isActive("bold"),
+        isActive: editor?.isActive("bold"),
         onClick: () => editor?.chain().focus().toggleBold().run(),
-
       },
- {
+      {
         label: "Italic",
         icon: ItalicIcon,
-          isActive: editor?.isActive("italic"),
+        isActive: editor?.isActive("italic"),
         onClick: () => editor?.chain().focus().toggleItalic().run(),
-
       },
-{
+      {
         label: "Underline",
         icon: UnderlineIcon,
-          isActive: editor?.isActive("underline"),
+        isActive: editor?.isActive("underline"),
         onClick: () => editor?.chain().focus().toggleUnderline().run(),
-
       },
-        
-
-      ],
-      [
-        {
+    ],
+    [
+      {
         label: "Comment",
         icon: MessageSquarePlusIcon,
-        onClick: () => console.log("Comment"), 
-        isActive:false,
-
+        onClick: () => console.log("Comment"),
+        isActive: false,
       },
-  {
+      {
         label: "List Todo",
         icon: ListTodoIcon,
-        onClick: () => editor?.chain().focus().toggleTaskList().run(), 
-        isActive:editor?.isActive("taskList"),
-
+        onClick: () => editor?.chain().focus().toggleTaskList().run(),
+        isActive: editor?.isActive("taskList"),
       },
-{
+      {
         label: "Remove Formatting",
 
         icon: RemoveFormattingIcon,
-        onClick: () => editor?.chain().focus().unsetAllMarks().run(), 
-
+        onClick: () => editor?.chain().focus().unsetAllMarks().run(),
       },
-
-      
-      
-
-      ],
+    ],
   ];
 
   return (
@@ -136,32 +171,25 @@ export const Toolbar = () => {
       {sections[0].map((item) => (
         <ToolbarButton key={item.label} {...item} />
       ))}
-      <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
-      {/*TODO font famitly*/}
-           <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
+      <Separator orientation="vertical" className="h-6 bg-neutral-300" />
+      <FontFamilyButton />
+      <Separator orientation="vertical" className="h-6 bg-neutral-300" />
       {/*TODO heading*/}
- 
-      <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
+
+      <Separator orientation="vertical" className="h-6 bg-neutral-300" />
       {/*TODO font size*/}
 
-      <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
-      { sections[1].map((item) => (
-
-<ToolbarButton key={item.label} {...item} />
+      <Separator orientation="vertical" className="h-6 bg-neutral-300" />
+      {sections[1].map((item) => (
+        <ToolbarButton key={item.label} {...item} />
       ))}
-      <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
-      { sections[2].map((item) => (
-
-<ToolbarButton key={item.label} {...item} />
+      <Separator orientation="vertical" className="h-6 bg-neutral-300" />
+      {sections[2].map((item) => (
+        <ToolbarButton key={item.label} {...item} />
       ))}
 
-
-      <Separator orientation="vertical" className="h-6 bg-neutral-300"/>
+      <Separator orientation="vertical" className="h-6 bg-neutral-300" />
       {/*TODO text color*/}
-
-
-
-      
     </div>
   );
 };
