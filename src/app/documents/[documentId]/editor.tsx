@@ -13,6 +13,7 @@ import TableHeader from "@tiptap/extension-table-header";
 import {Color} from "@tiptap/extension-color";
 import Highlight from "@tiptap/extension-highlight";
 import TableRow from "@tiptap/extension-table-row";
+import TextAlign from '@tiptap/extension-text-align'
 import FontFamily from "@tiptap/extension-font-family";
 import { useEditorStore } from "@/store/use-editor-store";
 import TextStyle from "@tiptap/extension-text-style";
@@ -53,6 +54,7 @@ export const Editor = () => {
     },
     extensions: [
       StarterKit,
+      TextAlign.configure({ types: ["heading", "paragraph"] }),
       Link.configure({ openOnClick: false,autolink: true,defaultProtocol: 'https://'}),
       Color,
       Highlight.configure({
