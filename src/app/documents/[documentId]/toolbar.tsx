@@ -14,6 +14,8 @@ import {
   ImageIcon,
   ItalicIcon,
   Link2Icon,
+  ListIcon,
+  ListOrderedIcon,
   ListTodoIcon,
   LucideIcon,
   MessageSquarePlusIcon,
@@ -33,11 +35,68 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
+const ListButton = () => {
+  const { editor } = useEditorStore();
+  const lists = [
+    {
+      label: "Bullet List",
+
+      icon: ListIcon,
+      isActive: () => editor?.isActive("bulletList"),
+      onClick: () => editor?.chain().focus().toggleBulletList().run(),
+    },
+    {
+      label: "Ordered List",
+
+      icon: ListOrderedIcon,
+
+      isActive: () => editor?.isActive("orderedList"),
+
+      onClick: () => editor?.chain().focus().toggleOrderedList().run(),
+    },
+  ];
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          className="h-7 min-w-7 shrink-0 flex flex-col items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm"
+          aria-label="Text alignment options"
+        >
+          <ListIcon className="size-4" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="p-1 flex flex-col gap-y-1">
+        {lists.map(({ label, onClick,isActive, icon: Icon }) => (
+          <button
+            key={label}
+            onClick={onClick}
+            className={cn(
+              "flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80",
+              isActive() && "bg-neutral-200/80",
+            )}
+          >
+            <Icon className="size-4" />
+            <span className="text-sm">{label}</span>
+          </button>
+        ))}
+
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
 const AlignButton = () => {
   const { editor } = useEditorStore();
@@ -46,10 +105,7 @@ const AlignButton = () => {
     { label: "Center", value: "center", icon: AlignCenter },
     { label: "Right", value: "right", icon: AlignRightIcon },
     { label: "Justify", value: "justify", icon: AlignJustifyIcon },
-
-
-  ]
-
+  ];
 
   return (
     <DropdownMenu>
@@ -68,10 +124,10 @@ const AlignButton = () => {
             onClick={() => editor?.chain().focus().setTextAlign(value).run()}
             className={cn(
               "flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80",
-              editor?.isActive({ textAlign: value }) && "bg-neutral-200/80"
+              editor?.isActive({ textAlign: value }) && "bg-neutral-200/80",
             )}
           >
-            <Icon  className="size-4"/>
+            <Icon className="size-4" />
             <span className="text-sm">{label}</span>
           </button>
         ))}
@@ -79,7 +135,6 @@ const AlignButton = () => {
     </DropdownMenu>
   );
 };
-
 
 const ImageButton = () => {
   const { editor } = useEditorStore();
@@ -100,39 +155,35 @@ const ImageButton = () => {
       if (file) {
         const imageUrl = URL.createObjectURL(file);
         onChange(imageUrl);
-      };
-    }
+      }
+    };
     input.click();
-  }
+  };
   const handleImageUrlSubmit = () => {
     if (imageUrl) {
       onChange(imageUrl);
       setImageUrl("");
       setIsDialogOpen(false);
     }
-
-  }
+  };
 
   return (
     <>
-      <DropdownMenu
-      >
+      <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className="h-7 min-w-7 shrink-0 flex flex-col items-center  justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
             <ImageIcon className="size-4" />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem onClick={onUpload} >
+          <DropdownMenuItem onClick={onUpload}>
             <UploadIcon className="size-4 mr-2" />
             Upload
-
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setIsDialogOpen(true)} >
+          <DropdownMenuItem onClick={() => setIsDialogOpen(true)}>
             <SearchIcon className="size-4 mr-2" />
             Paste image url
           </DropdownMenuItem>
-
         </DropdownMenuContent>
       </DropdownMenu>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -140,7 +191,8 @@ const ImageButton = () => {
           <DialogHeader>
             <DialogTitle>insert image url</DialogTitle>
           </DialogHeader>
-          <input placeholder="Insert Image url"
+          <input
+            placeholder="Insert Image url"
             value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
             onKeyDown={(e) => {
@@ -156,8 +208,6 @@ const ImageButton = () => {
       </Dialog>
     </>
   );
-
-
 };
 const LinkButton = () => {
   const { editor } = useEditorStore();
@@ -168,12 +218,13 @@ const LinkButton = () => {
     setValue("");
   };
   return (
-    <DropdownMenu onOpenChange={(open) => {
-      if (open) {
-        setValue(editor?.getAttributes("link").href || "")
-      }
-
-    }}>
+    <DropdownMenu
+      onOpenChange={(open) => {
+        if (open) {
+          setValue(editor?.getAttributes("link").href || "");
+        }
+      }}
+    >
       <DropdownMenuTrigger asChild>
         <button className="h-7 min-w-7 shrink-0 flex flex-col items-center  justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
           <Link2Icon className="size-4" />{" "}
@@ -181,20 +232,15 @@ const LinkButton = () => {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="p-2.5 flex items-center gap-x-2 ">
-        <Input placeholder="https://example.com"
+        <Input
+          placeholder="https://example.com"
           value={value}
           onChange={(e) => setValue(e.target.value)}
-
         />
-        <Button onClick={() => onChange(value)}>
-          Apply
-        </Button>
-
+        <Button onClick={() => onChange(value)}>Apply</Button>
       </DropdownMenuContent>
     </DropdownMenu>
   );
-
-
 };
 
 const HighlightColorButton = () => {
@@ -461,6 +507,7 @@ export const Toolbar = () => {
       <LinkButton />
       <ImageButton />
       <AlignButton />
+      <ListButton />
       <Separator orientation="vertical" className="h-6 bg-neutral-300" />
       {sections[1].map((item) => (
         <ToolbarButton key={item.label} {...item} />
